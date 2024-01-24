@@ -72,6 +72,7 @@
                 <div class="modal-content border-0">
                     <div class="modal-header bg-dark text-white">
                         <h5 id="productModalLabel" class="modal-title">
+                            <!-- 因為 add/edit 共用 modal, 判斷類型顯示正確的 title -->
                             <span v-if="isActionAdd">新增產品</span>
                             <span v-else="isActionAdd">編輯產品</span>
                         </h5>
@@ -132,11 +133,13 @@
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <label for="origin_price" class="form-label">原價</label>
+                                        <!-- 使用 .number 以符合 api 要的資料類型-->
                                         <input v-model.number="selectedProduct.origin_price" id="origin_price" type="number"
                                             min="0" class="form-control" placeholder="請輸入原價">
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="price" class="form-label">售價</label>
+                                        <!-- 使用 .number 以符合 api 要的資料類型-->
                                         <input v-model.number="selectedProduct.price" id="price" type="number" min="0"
                                             class="form-control" placeholder="請輸入售價">
                                     </div>

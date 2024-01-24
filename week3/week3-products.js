@@ -44,12 +44,15 @@ const data = createApp({
                 })
         },
         openAddProductModal() {
+            //清空資料
             this.selectedProduct = { imagesUrl: [] };
+            //設定操作模式為新增
             this.isActionAdd = true;
             productModal.show();
         },
         openEditProductModal(item) {
             this.selectedProduct = { ...item };
+            //設定操作模式為編輯
             this.isActionAdd = false;
             productModal.show();
         },
@@ -88,7 +91,6 @@ const data = createApp({
                 });
         },
         addImage() {
-            //this.selectedProduct.imagesUrl = [];
             this.selectedProduct.imagesUrl.push('');
         },
         deleteImage(index) {
@@ -96,11 +98,6 @@ const data = createApp({
         },
 
     },
-    // computed: {
-    //     showAddImageButton() {
-    //         return this.selectedProduct.imagesUrl.length == 0;
-    //     }
-    // },
     mounted() {
         productModal = new bootstrap.Modal(document.getElementById('productModal'));
         delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'));
