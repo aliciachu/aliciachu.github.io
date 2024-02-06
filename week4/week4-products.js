@@ -1,10 +1,11 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.11/vue.esm-browser.js';
+import pagination from '../../week4/components/pagination.js';
+import productModal from '../../week4/components/productModal.js';
+import delProductModal from '../../week4/components/delProductModal.js';
 
 const url = "https://ec-course-api.hexschool.io/v2/";
 const path = "amaaaa";
 
-let productModal = null;
-let delProductModal = null;
 const data = createApp({
     data() {
         return {
@@ -12,32 +13,28 @@ const data = createApp({
                 imagesUrl: []
             },
             isActionAdd: false,
-            products: []
+            products: [],
+            pages: {},
         }
-    }, methods: {
+    },
+    methods: {
         checkLogin() {
             axios.post(`${url}api/user/check`)
                 .then(res => {
-                    if (res.data.success) {
-                        this.getProduct();
-                    } else {
-                        alert(res.data.message);
-                        window.location = 'week3-login.html';
-                    }
+                    this.getProduct();
                 })
                 .catch(err => {
                     console.log(err);
+                    window.location = 'week4-login.html';
                 })
         },
-        getProduct() {
-            axios.get(`${url}api/${path}/admin/products/all`)
+        getProduct(page = 1) {
+            axios.get(`${url}api/${path}/admin/products?page=${page}`)
                 .then(res => {
-                    if (res.data.success) {
-                        //轉成array
-                        this.products = Object.values(res.data.products);
-                    } else {
-                        alert(res.data.message);
-                    }
+                    //轉成array
+                    this.products = Object.values(res.data.products);
+                    this.pages = res.data.pagination;
+                    console.log(res);
                 })
                 .catch(err => {
                     console.log(err);
@@ -48,23 +45,23 @@ const data = createApp({
             this.selectedProduct = { imagesUrl: [] };
             //設定操作模式為新增
             this.isActionAdd = true;
-            productModal.show();
+            this.$refs.productModal.openModal();
         },
         openEditProductModal(item) {
             this.selectedProduct = { ...item };
             //設定操作模式為編輯
             this.isActionAdd = false;
-            productModal.show();
+            this.$refs.productModal.openModal();
         },
         openDeleteProductModal(item) {
-            this.selectedProduct = { ...item };
-            delProductModal.show();
+            this.selectedProduct = item;
+            this.$refs.delProductModal.openModal();
         },
         addProduct() {
             axios.post(`${url}api/${path}/admin/product`, { data: this.selectedProduct })
                 .then(res => {
                     alert(res.data.message);
-                    productModal.hide();
+                    this.$refs.productModal.closeModal();
                     this.getProduct();
                 }).catch(err => {
                     alert(err.data.message);
@@ -74,7 +71,7 @@ const data = createApp({
             axios.put(`${url}api/${path}/admin/product/${this.selectedProduct.id}`, { data: this.selectedProduct })
                 .then(res => {
                     alert(res.data.message);
-                    productModal.hide();
+                    this.$refs.productModal.closeModal();
                     this.getProduct();
                 }).catch(err => {
                     alert(err.data.message);
@@ -84,13 +81,16 @@ const data = createApp({
             axios.delete(`${url}api/${path}/admin/product/${this.selectedProduct.id}`)
                 .then(res => {
                     alert(res.data.message);
-                    delProductModal.hide();
+                    this.$refs.delProductModal.closeModal();
                     this.getProduct();
                 }).catch(err => {
                     alert(err.data.message);
                 });
         },
         addImage() {
+            if (this.selectedProduct.imagesUrl == null)
+                this.selectedProduct.imagesUrl = [];
+
             this.selectedProduct.imagesUrl.push('');
         },
         deleteImage(index) {
@@ -99,13 +99,18 @@ const data = createApp({
 
     },
     mounted() {
-        productModal = new bootstrap.Modal(document.getElementById('productModal'));
-        delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'));
+        //productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        //delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'));
         // 取得cookie
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
         axios.defaults.headers.common['Authorization'] = token;
 
         this.checkLogin();
+    },
+    components: {
+        pagination,
+        productModal,
+        delProductModal
     }
 });
 data.mount('#app');
