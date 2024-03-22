@@ -49,7 +49,16 @@ const app = Vue.createApp({
                 cartQtyLoading: '',
                 delCartLoading: ''
             },
-            carts: {}
+            carts: {},
+            form: {
+              user: {
+                name: '',
+                email: '',
+                tel: '',
+                address: '',
+              },
+              message: '',
+            },
             
         }
     },
@@ -104,6 +113,14 @@ const app = Vue.createApp({
                     this.getCart();
                 });
         },
+        createOrder(){
+            axios.post(`${url}api/${path}/order`, { data:this.form})
+                .then(res => {
+                    this.$refs.form.resetForm();
+                    this.form.message = ''; 
+                    this.getCart();
+                });
+        }
     },
     components: {
         userModal
