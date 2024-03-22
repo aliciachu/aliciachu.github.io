@@ -46,7 +46,8 @@ const app = Vue.createApp({
             tempProduct: {},
             status: {
                 addCartLoading: '',
-                cartQtyLoading: ''
+                cartQtyLoading: '',
+                delCartLoading: ''
             },
             carts: {}
             
@@ -96,10 +97,10 @@ const app = Vue.createApp({
                 });
         },
         removeCartItem(id){
-            this.status.cartQtyLoading = id;
+            this.status.delCartLoading = id;
             axios.delete(`${url}api/${path}/cart/${id}`)
                 .then(res => {
-                    this.status.cartQtyLoading = '';
+                    this.status.delCartLoading = '';
                     this.getCart();
                 });
         },
