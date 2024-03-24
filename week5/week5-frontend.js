@@ -113,6 +113,12 @@ const app = Vue.createApp({
                     this.getCart();
                 });
         },
+        removeCarts(){
+            axios.delete(`${url}api/${path}/carts`)
+                .then(res => {
+                    this.getCart();
+                });
+        },
         createOrder(){
             axios.post(`${url}api/${path}/order`, { data:this.form})
                 .then(res => {
